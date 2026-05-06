@@ -1,0 +1,6 @@
+name=Widget Blocker
+version=1.0
+versionCode=1
+author=YourName
+description=基于 LibXposed 拦截 Android 16 小组件申请
+minApiVersion=101
