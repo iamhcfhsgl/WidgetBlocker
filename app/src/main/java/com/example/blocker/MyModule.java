@@ -11,7 +11,7 @@ import io.github.libxposed.api.XposedModule;
 import io.github.libxposed.api.annotations.BeforeInvocation;
 import io.github.libxposed.api.annotations.XposedHooker;
 
-public class MyModule extends XposedModule {
+公共 class MyModule extends XposedModule {
 
     public MyModule(XposedInterface base, ModuleContext context) {
         super(base, context);
@@ -39,12 +39,12 @@ public class MyModule extends XposedModule {
     }
 
     @XposedHooker
-    public static class MyHooker implements XposedInterface.BeforeHooker {
-        @BeforeInvocation
-        public static MyHooker.BeforeResult before(XposedInterface.AfterHooker.BeforeParam param) {
-            // 核心操作：直接拦截并返回 false
-            // 这样系统弹窗就不会出现，应用也会收到“失败”反馈
-            return MyHooker.BeforeResult.intercept(false);
-        }
+公共 static class MyHooker implements XposedInterface.BeforeHooker {
+    @BeforeInvocation
+    // 注意：API 101 推荐直接使用 before 而不是 beforeInvocation
+    public static MyHooker.BeforeResult before(XposedInterface.AfterHooker.BeforeParam param) {
+        // 拦截逻辑
+        return MyHooker.BeforeResult.intercept(false);
     }
+}
 }
