@@ -5,40 +5,44 @@ import android.os.Bundle;
 import android.app.PendingIntent;
 import java.lang.reflect.Method;
 
-import io.github.libxposed.api.XposedInterface;
 import io.github.libxposed.api.XposedModule;
+import io.github.libxposed.api.XposedModuleInterface.PackageLoadedParam;
 
 public class MyModule extends XposedModule {
 
-    // 关键修正：在 API 101 中，必须指明 ModuleContext 的完整来源
-    public MyModule(XposedInterface base, XposedInterface.ModuleContext context) {
-        super(base, context);
+    // 1. 根据你提供的代码，构造函数不需要 base 和 context 参数
+    // 框架会自动调用无参构造函数
+    public MyModule() {
+        super();
     }
 
     @Override
-    public void onPackageLoaded(PackageLoadedParam lp) {
-        // 过滤系统关键包，防止造成卡顿
-        if (lp.getPackageName().equals("android")) return;
+    public void onPackageLoaded(PackageLoadedParam param) {
+        super.onPackageLoaded(param);
+
+        // 排除系统核心，防止 Hook 循环
+        if (param.getPackageName().equals("android")) {
+            return;
+        }
 
         try {
-            // API 101 获取 ClassLoader
-            ClassLoader loader = lp.getClassLoader();
-            Class<?> awmClass = loader.loadClass("android.appwidget.AppWidgetManager");
+            // 2. 关键：ClassLoader 的正确名称是 defaultClassLoader
+            ClassLoader loader = param.getDefaultClassLoader();
             
+            Class<?> awmClass = loader.loadClass("android.appwidget.AppWidgetManager");
             Method targetMethod = awmClass.getDeclaredMethod("requestPinAppWidget", 
                 ComponentName.class, Bundle.class, PendingIntent.class);
 
-            // 终极兼容写法：手动实现接口，不使用 Lambda，彻底解决符号推导失败
-            hookBefore(targetMethod, new XposedInterface.BeforeHookCallback() {
-                @Override
-                public void onBeforeInvocation(XposedInterface.BeforeHookerCallback callback) {
-                    // 拦截并拒绝小组件添加请求
-                    callback.setInterception(false);
-                }
+            // 3. 关键：使用 Modern API 的拦截器语法
+            // hook(method) 返回一个控制对象，通过 intercept 进行拦截
+            hook(targetMethod).intercept(chain -> {
+                // chain.proceed() 是执行原方法
+                // 我们直接返回 false (不调用 chain.proceed())，即表示拒绝该请求
+                return false; 
             });
 
         } catch (Throwable t) {
-            // 保持静默
+            // 静默处理所有错误
         }
     }
 }
