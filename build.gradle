@@ -14,9 +14,11 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        // LibXposed 的库通常托管在 Maven Central
+        // 备用：某些 CI 镜像可能同步慢
+        maven { url 'https://repo1.maven.org/maven2/' }
     }
 }
+
 
 task clean(type: Delete) {
     delete rootProject.buildDir
