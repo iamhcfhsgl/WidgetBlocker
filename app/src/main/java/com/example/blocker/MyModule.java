@@ -1,57 +1,44 @@
 package com.example.blocker;
 
-import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.os.Bundle;
 import android.app.PendingIntent;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import java.lang.reflect.Method;
 
 import io.github.libxposed.api.XposedInterface;
 import io.github.libxposed.api.XposedModule;
-import io.github.libxposed.api.annotations.BeforeInvocation;
-import io.github.libxposed.api.annotations.XposedHooker;
 
 public class MyModule extends XposedModule {
 
-    public MyModule(@NonNull XposedInterface base, @NonNull ModuleContext context) {
+    public MyModule(XposedInterface base, ModuleContext context) {
         super(base, context);
     }
 
     @Override
-    public void onPackageLoaded(@NonNull PackageLoadedParam lp) {
-        // API 101 中，lp.isSystemPackage() 改为了属性访问或特定接口，
-        // 我们改用通用的包名过滤
-        if (lp.getPackageName().equals("android") || 
-            lp.getPackageName().contains("launcher") || 
-            lp.getPackageName().contains("systemui")) {
+    public void onPackageLoaded(PackageLoadedParam lp) {
+        // 排除系统核心和桌面
+        String pkg = lp.getPackageName();
+        if (pkg.equals("android") || pkg.contains("launcher") || pkg.contains("systemui")) {
             return;
         }
 
         try {
-            // 加载目标类
+            // 加载类
             Class<?> awmClass = lp.getClassLoader().loadClass("android.appwidget.AppWidgetManager");
             
-            // 获取方法
-            Method requestMethod = awmClass.getDeclaredMethod("requestPinAppWidget", 
+            // 获取目标方法
+            Method targetMethod = awmClass.getDeclaredMethod("requestPinAppWidget", 
                 ComponentName.class, Bundle.class, PendingIntent.class);
 
-            // API 101 使用更严格的泛型 hook 方法
-            hookBefore(requestMethod, MyHooker.class);
-            
-        } catch (ClassNotFoundException | NoSuchMethodException e) {
-            // 忽略
-        }
-    }
+            // API 101 的标准 Hook 写法
+            hookBefore(targetMethod, callback -> {
+                // 直接拦截并返回 false，阻止小组件添加请求
+                callback.setInterception(false);
+            });
 
-    @XposedHooker
-    public static class MyHooker implements XposedInterface.Hooker {
-        @BeforeInvocation
-        public static MyInterface.BeforeResult before(XposedInterface.BeforeParam param) {
-            // 核心拦截逻辑：阻止申请弹窗
-            return MyInterface.BeforeResult.intercept(false);
+        } catch (Exception e) {
+            // 忽略报错
         }
     }
 }
