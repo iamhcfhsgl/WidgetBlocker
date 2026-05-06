@@ -14,15 +14,15 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      # 如果你没上传 gradlew，这一步会帮你自动生成
-      - name: Generate Gradle Wrapper
-        run: gradle wrapper
+      # 关键：这行会利用系统环境强行修复你的 Gradle Wrapper
+      - name: Setup Gradle
+        run: gradle wrapper --gradle-version 8.5
 
-      - name: Grant execute permission for gradlew
+      - name: Grant execute permission
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew assembleRelease
+        run: ./gradlew :app:assembleRelease
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
