@@ -3,17 +3,22 @@
 
     <application
         android:label="Widget Blocker (LibXposed)"
-        android:allowBackup="false">
-        
-        <meta-data
+        android:allowBackup="false"
+        android:hasCode="true"> <meta-data
             android:name="xposedmodule"
             android:value="true" />
+        
         <meta-data
             android:name="xposeddescription"
             android:value="基于 LibXposed API 101 拦截 Android 16 小组件申请" />
-        
+
+        <meta-data
+            android:name="xposedminversion"
+            android:value="101" />
+
         <meta-data
             android:name="xposedsharedapi"
             android:value="true" />
+
     </application>
 </manifest>
