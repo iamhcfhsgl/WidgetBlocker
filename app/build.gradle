@@ -13,19 +13,15 @@ android {
         versionCode 1
         versionName "1.0"
     }
-    
-    // 如果 Actions 还是报 SDK 35 的错，可以在这里强行压制
-    lintOptions {
-        checkReleaseBuilds false
-        abortOnError false
-    }
-}
 
-// 重点：dependencies 必须在 android 块之外！
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+} // <--- 注意这里，android 块在这里就结束了
+
 dependencies {
     compileOnly 'io.github.libxposed:api:101.0.1'
     compileOnly 'androidx.annotation:annotation:1.7.1'
 }
-}
-
-
