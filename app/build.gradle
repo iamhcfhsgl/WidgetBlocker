@@ -22,11 +22,6 @@ android {
 } // <--- 注意这里，android 块在这里就结束了
 
 dependencies {
-    // 基础 API 接口
     compileOnly 'io.github.libxposed:api:101.0.1'
-    
-    // 关键：包含 @XposedHooker, @BeforeInvocation 等注解的库
-    compileOnly 'io.github.libxposed:interface:101.0.1' 
-
     compileOnly 'androidx.annotation:annotation:1.7.1'
 }
