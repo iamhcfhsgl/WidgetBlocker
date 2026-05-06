@@ -1,0 +1,21 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.example.blocker'
+    compileSdk 35 // Android 15/16 适配
+
+    defaultConfig {
+        applicationId "com.example.blocker"
+        minSdk 26
+        targetSdk 35
+        versionCode 1
+        versionName "1.0"
+    }
+}
+
+dependencies {
+    // 关键：引用 LibXposed API 101
+    compileOnly 'io.github.libxposed:api:101'
+}
