@@ -4,7 +4,7 @@ plugins {
 
 android {
     namespace 'com.example.blocker'
-    compileSdk 35
+    compileSdk 35 // 这里的版本没问题，不用非得对齐 36
 
     defaultConfig {
         applicationId "com.example.blocker"
@@ -17,9 +17,31 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+            // 借鉴：确保使用 debug 签名或者你自己的签名，未签名的包 LSPosed 可能不认
+            signingConfig signingConfigs.debug 
         }
     }
-} // <--- 注意这里，android 块在这里就结束了
+
+    // 关键修正 1：确保资源目录被正确识别
+    sourceSets {
+        main {
+            java.srcDirs = ['src/main/java']
+            resources.srcDirs = ['src/main/resources']
+        }
+    }
+
+    // 关键修正 2：防止打包时排除掉 xposed 配置文件
+    packagingOptions {
+        resources {
+            // 借鉴那个项目的排除规则，但要确保不包含我们的 xposed 路径
+            excludes += [
+                'META-INF/*.version',
+                'META-INF/LICENSE*',
+                'META-INF/NOTICE*',
+            ]
+        }
+    }
+}
 
 dependencies {
     compileOnly 'io.github.libxposed:api:101.0.1'
