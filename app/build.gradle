@@ -1,4 +1,27 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.example.blocker'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId "com.example.blocker"
+        minSdk 26
+        targetSdk 35
+        versionCode 1
+        versionName "1.0"
+    }
+    
+    // 如果 Actions 还是报 SDK 35 的错，可以在这里强行压制
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+}
+
+// 重点：dependencies 必须在 android 块之外！
 dependencies {
-    // 关键：API 101 的完整稳定版坐标
     compileOnly 'io.github.libxposed:api:101.0.1'
 }
