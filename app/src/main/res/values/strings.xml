@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="xposed_description">拦截 Android 16 小组件弹窗申请</string>
+</resources>
