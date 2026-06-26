@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.blocker">
+
+    <uses-sdk
+        android:minSdkVersion="26"
+        android:targetSdkVersion="35" />
 
     <application
+        android:label="WidgetBlocker"
+        android:description="@string/xposed_description"
+        android:hasCode="true"
         android:allowBackup="false"
-        android:label="WidgetBlocker">
-
-        <meta-data
-            android:name="xposedsharedapi"
-            android:value="true" />
-
-    </application>
+        android:extractNativeLibs="false" />
 </manifest>
