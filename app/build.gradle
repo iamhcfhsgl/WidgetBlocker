@@ -22,25 +22,33 @@ android {
         }
     }
 
-    // 关键修正 1：确保资源目录被正确识别
-    sourceSets {
-        main {
-            java.srcDirs = ['src/main/java']
-            resources.srcDirs = ['src/main/resources']
-        }
+    plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.example.blocker'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId "com.example.blocker"
+        minSdk 26
+        targetSdk 35
+        versionCode 1
+        versionName "1.0"
     }
 
-    // 关键修正 2：防止打包时排除掉 xposed 配置文件
-    packagingOptions {
-        resources {
-            // 借鉴那个项目的排除规则，但要确保不包含我们的 xposed 路径
-            excludes += [
-                'META-INF/*.version',
-                'META-INF/LICENSE*',
-                'META-INF/NOTICE*',
-            ]
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.debug
         }
     }
+}
+
+dependencies {
+    compileOnly 'io.github.libxposed:api:102.0.0'
+    compileOnly 'androidx.annotation:annotation:1.7.1'
 }
 
 dependencies {
